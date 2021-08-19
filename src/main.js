@@ -1,16 +1,19 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from '@/router'
-//注册全局组件
+
 //引入（大）仓库并进行注册
 //引入仓库进行注册
+import store from '@/store'
+//注册全局组件
+import typeNav from '@/components/TypeNav'
+import Carousel from '@/components/Carousel'
+Vue.component(typeNav.name,typeNav)
+Vue.component(Carousel.name,Carousel)
+Vue.config.productionTip = false
+//引入mockServe.js需要执行一次才能有数据（mock模仿服务器）
 import '@/mock/mockServe';
 import 'swiper/css/swiper.css'
-import store from '@/store'
-import typeNav from '@/components/TypeNav'
-Vue.component(typeNav.name,typeNav)
-Vue.config.productionTip = false
-
 new Vue({
   render: h => h(App),
   //需要把router进行注册
