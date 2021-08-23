@@ -16,6 +16,10 @@ import '@/mock/mockServe';
 import 'swiper/css/swiper.css'
 new Vue({
   render: h => h(App),
+  //安装全局事件总线
+  beforeCreate(){
+    Vue.prototype.$bus = this;
+  },
   //需要把router进行注册
   //可以让全部的组件（非路由|路由组件）都可以获取到$route|$router属性
   //$route(路由)：可以获取到路由信息（path、query、params）

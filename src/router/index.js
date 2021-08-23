@@ -69,7 +69,7 @@ export default new VueRouter({
     {
       //下面这种写法：代表的是params参数可以传递|当然也可以不传递  ?(正则:两次代表出现次数0|1)
       //今晚在练习的时候，切记?给我带上，因为咱们项目当中params参数就可以传递|不传递也可以
-      path: "/search/:keyword1?",
+      path: "/search/:keyword?",
       component: Search,
       meta:{isShow:true},
       // 命名路由
