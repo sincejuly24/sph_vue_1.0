@@ -54,7 +54,10 @@
               <li class="yui3-u-1-5" v-for="(good,index) in goodsList" :key="good.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html" target="_blank"><img :src="good.defaultImg" /></a>
+                    <!-- 在路由跳转的时候切记别忘记带id（params）参数 -->
+                    <router-link :to="`detail/${good.id}`">
+                      <img :src="good.defaultImg" />
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -76,35 +79,7 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
+          <Pagination :pageNo="searchParams.pageNo"  :pageSize="searchParams.pageSize" :total="total" :continues="5" @getPageNo="getPageNo"/>
         </div>
       </div>
     </div>
@@ -112,12 +87,12 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+  import { mapGetters,mapState } from 'vuex';
   import SearchSelector from './SearchSelector/SearchSelector'
   export default {
     name: 'Search',
     components: {
-      SearchSelector
+      SearchSelector,
     },
     data() {
       return {
@@ -239,6 +214,14 @@ import { mapGetters } from 'vuex';
         this.searchParams.order = newOrder;
         //再次发请求
         this.getData();
+      },
+      //分页器自定义方法
+      //自定义事件的回调函数---获取当前第几页
+      getPageNo(pageNo){
+      //整理带给服务器参数
+      this.searchParams.pageNo = pageNo;
+      //再次发请求
+      this.getData();
       }
     },
     computed:{
@@ -256,6 +239,11 @@ import { mapGetters } from 'vuex';
       isDesc() {
         return this.searchParams.order.indexOf("desc") != -1;
       },
+      //数据总数
+      //获取search模块展示产品一共多少数据
+      ...mapState({
+          total:state=>state.search.searchList.total
+      })
     },
     //数据监听
     watch:{

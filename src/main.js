@@ -8,8 +8,10 @@ import store from '@/store'
 //注册全局组件
 import typeNav from '@/components/TypeNav'
 import Carousel from '@/components/Carousel'
+import Pagination from "@/components/Pagination"
 Vue.component(typeNav.name,typeNav)
 Vue.component(Carousel.name,Carousel)
+Vue.component(Pagination.name,Pagination)
 Vue.config.productionTip = false
 //引入mockServe.js需要执行一次才能有数据（mock模仿服务器）
 import '@/mock/mockServe';

@@ -5,10 +5,7 @@ import Vue from "vue";
 //使用插件
 Vue.use(VueRouter);
 //引入一级路由组件
-import Home from "@/views/Home";
-import Search from "@/views/Search";
-import Login from "@/views/Login";
-import Register from "@/views/Register";
+import routes from "./routes"
 
 //重写push和replace方法（目的：1)在编程式导航当中，点击按钮的时候（多次：传递参数相同），回报警告？
 //注意：声明式导航是没有这类问题，因为人家内部已经解决了，编程式导航才会有这类问题
@@ -59,41 +56,16 @@ export default new VueRouter({
   //第一:路径的前面需要有/(不是二级路由) 
   //路径中单词都是小写的
   //component右侧Vc别给我加单引号【字符串：组件是对象（VueComponent类的实例）】
-  routes: [
-    {
-      path: "/home",
-      component: Home,
-      //路由元信息key不能瞎写：只能叫做meta
-      meta:{isShow:true},
-    },
-    {
-      //下面这种写法：代表的是params参数可以传递|当然也可以不传递  ?(正则:两次代表出现次数0|1)
-      //今晚在练习的时候，切记?给我带上，因为咱们项目当中params参数就可以传递|不传递也可以
-      path: "/search/:keyword?",
-      component: Search,
-      meta:{isShow:true},
-      // 命名路由
-      name:"search",
-      //路由是可以给组件传递props的
-      //props:($route)=>({keyword:$route.params.keyword,big:$route.query.big})
-      //props:(route)=>({keyword:route.params.keyword1,big:route.query.big})
-
-    },
-    {
-        path:'/login',
-        component:Login,
-        meta:{isShow:false}
-    },
-    {
-        path:'/register',
-        component:Register,
-        meta:{isShow:false}
-    },
-    // 重定向：本来上来访问的是/根，我就让你去home
-    {
-      path:'/',
-      redirect:'/home'
-    }
-  ],
+  routes,
+  //滚动行为
+  scrollBehavior (to, from, savedPosition) {
+    // if (savedPosition) {
+    //   return savedPosition
+    // } else {
+    //   return { x: 0, y: 0 }
+    // }
+    //对于所有路由导航，简单地让页面滚动到顶部。
+    return { x: 0, y: 0 }
+  },
 });
 

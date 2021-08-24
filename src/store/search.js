@@ -14,7 +14,7 @@ const actions = {
         let res = await reqSearchList(params)
         if (res.code == 200) {
             commit("GETSEARCHLIST",res.data)
-            console.log(params);
+            //console.log(params);
         }
     }
 };
