@@ -2,6 +2,7 @@ import axios from "axios"
 import nprogress from "nprogress"
 //如果出现进度条没有显示：一定是你忘记了引入样式了
 import "nprogress/nprogress.css";
+import store from "@/store"
 //底下的代码也是创建axios实例
 let requests = axios.create({
     baseURL:"/api",
@@ -10,10 +11,14 @@ let requests = axios.create({
 //二次封装axios
 //请求拦截器（请求没发出去之前做一些事情，比如进度条子）
 requests.interceptors.request.use((config)=>{
-    //config是配置对象(以后会用)
-    //可以让进度条开始动
-    nprogress.start();
-    return config;
+  //现在的问题是config是什么?配置对象
+  //可以让进度条开始动
+  if(store.state.detail.uuid_token){
+    //请求头添加一个字段(userTempId):和后台老师商量好了
+    config.headers.userTempId = store.state.detail.uuid_token;
+  }
+  nprogress.start();
+  return config;
 });
 //相应拦截器（服务器做出相应之后执行，也可以做一些事）
 requests.interceptors.response.use((res)=>{
