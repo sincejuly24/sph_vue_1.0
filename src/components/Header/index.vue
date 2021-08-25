@@ -61,7 +61,6 @@ export default {
         searchGoods(){
             //params参数可以传递|者不传递，但是我就是传递params参数，但是我传递的是一个空字符串？
             //用undefined解决这类为题
-            console.log(1)
             if(this.$route.query){
                 let location = { name:"search" };
                 location.params = {keyword:this.keyword || undefined};

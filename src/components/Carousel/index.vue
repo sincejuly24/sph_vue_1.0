@@ -20,6 +20,12 @@
 <script>
 import Swiper from "swiper";
 export default {
+
+    // 1)最完美的解决方案，解决轮播图问题.
+    // watch + nextTick : 数据监听：监听已有数据变化
+    // $nextTick：在下次DOM更新 循环结束之后 执行延迟回调。在  修改数据之后  立即使用这个方法，获取更新后的 DOM。
+    // $nextTick:可以保证也页面中的解构一定是有的，经常和很多插件一起使用【都需要DOM存在了】
+
   name: "Carousel",
   props: ["list"],
   watch: {
