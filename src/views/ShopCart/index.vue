@@ -19,9 +19,6 @@
             <img src="./images/goods1.png">
             <div class="item-msg">米家（MIJIA） 小米小白智能摄像机增强版 1080p高清360度全景拍摄AI增强</div>
           </li>
-          <li class="cart-list-con3">
-            <div class="item-txt">语音升级款</div>
-          </li>
           <li class="cart-list-con4">
             <span class="price">399.00</span>
           </li>
