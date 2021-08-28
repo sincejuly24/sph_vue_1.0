@@ -25,6 +25,9 @@ export default {
     },
     mounted() {
         this.$store.dispatch("getFloorList");
+        //在路由守卫里面统一派发就行了在跳转任何页面之前
+        //当前只是在home挂载时派发只能管这一个页面的事儿，跳别的就白搭了。
+        // this.$store.dispatch("getUserInfo");
     },
     computed:{
         ...mapState({

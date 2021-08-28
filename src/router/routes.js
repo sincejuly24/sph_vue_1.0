@@ -5,6 +5,7 @@ import Register from "@/views/Register";
 import Detail from "@/views/Detail"
 import AddCartSuccess from "@/views/AddCartSuccess"
 import ShopCart from "@/views/ShopCart"
+import Trade from "@/views/Trade"
 
 export default [
     {
@@ -51,6 +52,11 @@ export default [
     {
       path: "/shopcart",
       component: ShopCart,
+      meta: {isShow:true}
+    },
+    {
+      path: "/trade",
+      component:Trade,
       meta: {isShow:true}
     },
     // 重定向：本来上来访问的是/根，我就让你去home

@@ -6,6 +6,7 @@ import Vue from "vue";
 Vue.use(VueRouter);
 //引入一级路由组件
 import routes from "./routes"
+import store from "@/store";
 
 //重写push和replace方法（目的：1)在编程式导航当中，点击按钮的时候（多次：传递参数相同），回报警告？
 //注意：声明式导航是没有这类问题，因为人家内部已经解决了，编程式导航才会有这类问题
@@ -51,7 +52,7 @@ VueRouter.prototype.replace = function(location, resolve, reject) {
 };
 
 //对外暴露VueRouter类的实例
-export default new VueRouter({
+let router = new VueRouter({
   //配置路由
   //第一:路径的前面需要有/(不是二级路由) 
   //路径中单词都是小写的
@@ -68,4 +69,44 @@ export default new VueRouter({
     return { x: 0, y: 0 }
   },
 });
+
+router.beforeEach(async (to,from,next)=>{
+  //to:获取到要跳转到的路由信息
+  //from：获取到从哪个路由跳转过来来的信息
+  //next: next() 放行  next(path) 放行  
+  //  next();
+  //获取仓库中的token-----可以确定用户是登录了
+  let token = store.state.user.token;
+  let username = store.state.user.userinfo.name;
+  //登录了
+  if(token){
+    //登陆了不能去登录注册页面啦
+    if ((to.path=="/login"||to.path=="/register")){
+        next('/');
+    }else{
+      //登陆了有了用户名，除了登录注册其他页面都放行
+      if(username){
+        next();
+      }else{
+        try {
+          //登陆了但是没有userinfo，需要获取userinfo,也就是派发根据token获取用户信息的action
+          //之前是登录跳转home时在home挂载时派发获取用户信息的action，这个办法的缺点时只能在home中得到user info，别的页面
+          //还是没有，因为只在home挂载时派发了获取用户信息的action
+          //所以只需要在用户点击跳转（随意）页面之前派发获取用户信息的action就可以解决上述的问题了！！！
+          await store.dispatch("getUserInfo");
+          next();
+        } catch (error) {
+          //这里没有信息或者说没有token可能是因为token过期了。直接跳登录页面，别忘了清除token退出登录
+          await store.dispatch("userLogot");
+          next('/login');
+        }
+      }
+    }
+  }else{
+    //用户未登录时，爱干嘛干嘛直接放行！
+    next();
+  }
+})
+
+export default router;
 

@@ -28,7 +28,7 @@ const actions = {
         if (res.code == 200) {
             return "addcart successfully"
         }else{
-            return new Promise.reject( new Error("faile"))
+            return Promise.reject( new Error("faile"))
         }
     }
 };

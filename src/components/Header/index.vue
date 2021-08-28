@@ -5,10 +5,14 @@
             <div class="container">
                 <div class="loginList">
                     <p>尚品汇欢迎您！</p>
-                    <p>
+                    <p v-if="!userName">
                         <span>请</span>
                         <router-link to="/login">登录</router-link>
                         <router-link to="/register" class="register">免费注册</router-link>
+                    </p>
+                    <p v-if="userName">
+                        <span>欢迎，{{userName}}</span>
+                        <a class="register" @click="userExit">退出登录</a>
                     </p>
                 </div>
                 <div class="typeList">
@@ -50,6 +54,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
     name:'Header' ,
     data(){
@@ -67,6 +72,16 @@ export default {
                 location.query = this.$route.query;
                 this.$router.push(location);
             }
+        },
+        async userExit(){
+            //1:需要发请求，通知服务器退出登录【清除一些数据：token】
+            //2:清除项目当中的数据【userInfo、token】
+            try {
+                await this.$store.dispatch("userLogot")
+                this.$router.push('/home')
+            } catch (error) {
+                alert(error.message)
+            }
         }
     },
     mounted(){
@@ -74,7 +89,12 @@ export default {
         this.$bus.$on("clear",()=>{
             this.keyword = "";
         });
-    },              
+    },
+    computed:{
+        userName(){
+            return this.$store.state.user.userinfo.name;
+        }
+    }           
 };
 </script>
 
