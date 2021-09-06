@@ -29,32 +29,16 @@
       </div>
       <div class="detail">
         <h5>商品清单</h5>
-        <ul class="list clearFix">
+        <ul class="list clearFix" v-for="(good,index) in orderInfo.detailArrayList" :key="good.skuId">
           <li>
-            <img src="./images/goods.png" alt="">
+            <img :src="good.imgUrl" alt="" style="height:100px;width:100px">
           </li>
           <li>
-            <p>
-              Apple iPhone 6s (A1700) 64G 玫瑰金色 移动联通电信4G手机硅胶透明防摔软壳 本色系列</p>
+            <p>{{good.skuName}}</p>
             <h4>7天无理由退货</h4>
           </li>
           <li>
-            <h3>￥5399.00</h3>
-          </li>
-          <li>X1</li>
-          <li>有货</li>
-        </ul>
-        <ul class="list clearFix">
-          <li>
-            <img src="./images/goods.png" alt="">
-          </li>
-          <li>
-            <p>
-              Apple iPhone 6s (A1700) 64G 玫瑰金色 移动联通电信4G手机硅胶透明防摔软壳 本色系列</p>
-            <h4>7天无理由退货</h4>
-          </li>
-          <li>
-            <h3>￥5399.00</h3>
+            <h3>￥{{good.orderPrice}}</h3>
           </li>
           <li>X1</li>
           <li>有货</li>
@@ -62,7 +46,7 @@
       </div>
       <div class="bbs">
         <h5>买家留言：</h5>
-        <textarea placeholder="建议留言前先与商家沟通确认" class="remarks-cont"></textarea>
+        <textarea placeholder="建议留言前先与商家沟通确认" class="remarks-cont" v-model="msg"></textarea>
 
       </div>
       <div class="line"></div>
@@ -75,8 +59,8 @@
     <div class="money clearFix">
       <ul>
         <li>
-          <b><i>1</i>件商品，总商品金额</b>
-          <span>¥5399.00</span>
+          <b><i>{{orderInfo.totalNum}}</i>件商品，总商品金额</b>
+          <span>¥{{orderInfo.totalAmount}}.00</span>
         </li>
         <li>
           <b>返现：</b>
@@ -89,16 +73,16 @@
       </ul>
     </div>
     <div class="trade">
-      <div class="price">应付金额:　<span>¥5399.00</span></div>
+      <div class="price">应付金额:　<span>¥{{orderInfo.totalAmount}}.00</span></div>
       <div class="receiveInfo">
         寄送至:
-        <span>北京市昌平区宏福科技园综合楼6层</span>
-        收货人：<span>张三</span>
-        <span>15010658793</span>
+        <span>{{userDefaultAddress.fullAddress}}</span>
+        收货人：<span>{{userDefaultAddress.consignee}}</span>
+        <span>{{userDefaultAddress.phoneNum}}</span>
       </div>
     </div>
     <div class="sub clearFix">
-      <router-link class="subBtn" to="/pay">提交订单</router-link>
+      <a class="subBtn" @click="submitOrder">提交订单</a>
     </div>
   </div>
 </template>
@@ -107,21 +91,64 @@
 import { mapState } from 'vuex';
   export default {
     name: 'Trade',
+    data(){
+      return {
+        //收集买家的留言信息
+        msg: "",
+        //订单号
+        orderId: "",
+      };
+    },
     mounted(){
       this.$store.dispatch("getUserAddressList");
       this.$store.dispatch("getUserOrderInfo");
     },
     computed:{
-      ...mapState({addressList:state=>state.trade.addressList})
+      ...mapState(
+        {
+          addressList:state => state.trade.addressList,
+          orderInfo: state => state.trade.orderInfo
+        }
+      ),
+      //将来提交订单最终选中地址
+      userDefaultAddress() {
+        //find:查找数组当中符合条件的元素返回，最为最终结果
+        return this.addressList.find((item) => item.isDefault == 1) || {};
+      },       
     },
     methods:{
       //修改默认地址
       changeDefault(address,addressList){
         //全部的isDefault为零
-        addressList.forEach(item=>item.isDefault=0);0
+        addressList.forEach(item=>item.isDefault=0);
         address.isDefault = 1;
-
       },
+      //提交订单
+      async submitOrder(){
+        console.log(this)
+        //交易编码
+        let { tradeNo } = this.orderInfo;
+        //其余的六个参数
+        let data = {
+          consignee: this.userDefaultAddress.consignee, //最终收件人的名字
+          consigneeTel: this.userDefaultAddress.phoneNum, //最终收件人的手机号
+          deliveryAddress: this.userDefaultAddress.fullAddress, //收件人的地址
+          paymentWay: "ONLINE", //支付方式
+          orderComment: this.msg, //买家的留言信息
+          orderDetailList: this.orderInfo.detailArrayList, //商品清单
+        };
+        //需要带参数的：tradeNo
+        let result = await this.$API.reqSubmitOrder(tradeNo, data);
+        //提交订单成功
+        if (result.code == 200) {
+          this.orderId = result.data;
+          //路由跳转 + 路由传递参数
+          this.$router.push('/pay?orderId='+this.orderId);
+        //提交的订单失败
+        } else {
+          alert(result.data);
+        }
+      }
     }
   }
 </script>

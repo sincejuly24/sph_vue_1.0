@@ -1,21 +1,20 @@
 import {reqGetOrder, reqGetAddress } from "@/api"
 const state = {
     addressList : [],
-    orederInfo : {},
+    orderInfo : {},
 };
 const mutations = {
-    GETUSERORDERINFO(state,orederInfo){
-        state.orederInfo = orederInfo;
-    },
     GETUSERADDRESSLIST(state,addressList){
         state.addressList = addressList;
-    }
+    },
+    GETUSERORDERINFO(state,orederInfo){
+        state.orderInfo = orederInfo;
+    },
 };
 const actions = {
     //获取用户地址信息
     async getUserAddressList({commit}){
         let res = await reqGetAddress();
-        console.log(res);
         if (res.code == 200) {
             commit("GETUSERADDRESSLIST",res.data);
             return "ok"
